@@ -55,33 +55,50 @@ class ResponseCache:
         self._entries: list[CacheEntry] = []
 
     def get(self, query: str) -> tuple[str | None, float]:
-        best_value: str | None = None
-        best_score = 0.0
-        now = time.time()
-        self._entries = [e for e in self._entries if now - e.created_at <= self.ttl_seconds]
-        for entry in self._entries:
-            score = self.similarity(query, entry.key)
-            if score > best_score:
-                best_score = score
-                best_value = entry.value
-        if best_score >= self.similarity_threshold:
-            return best_value, best_score
-        return None, best_score
+        """Look up a cached response by semantic similarity.
+
+        TODO(student): Implement cache lookup with guardrails:
+        1. Return (None, 0.0) if _is_uncacheable(query) — privacy check
+        2. Evict expired entries (compare time.time() - created_at vs ttl_seconds)
+        3. Find best matching entry using self.similarity(query, entry.key)
+        4. If best_score >= similarity_threshold:
+           a. Check _looks_like_false_hit(query, best_key) — if true, log to
+              self.false_hit_log and return (None, best_score)
+           b. Otherwise return (best_value, best_score)
+        5. Return (None, best_score) if no match above threshold
+
+        You'll need a self.false_hit_log: list[dict[str, object]] attribute
+        (add it in __init__).
+        """
+        raise NotImplementedError("TODO: implement get()")
 
     def set(self, query: str, value: str, metadata: dict[str, str] | None = None) -> None:
-        self._entries.append(CacheEntry(query, value, time.time(), metadata or {}))
+        """Store a response in cache.
+
+        TODO(student): Implement with privacy guardrail:
+        1. Return immediately if _is_uncacheable(query)
+        2. Append a CacheEntry to self._entries
+        """
+        raise NotImplementedError("TODO: implement set()")
 
     @staticmethod
     def similarity(a: str, b: str) -> float:
-        """Very small baseline similarity using token overlap.
+        """Compute semantic similarity between two strings.
 
-        TODO(student): Improve with embeddings or a deterministic vectorizer.
+        TODO(student): Implement cosine similarity over character n-grams + word tokens.
+        The naive token-overlap (Jaccard) approach loses too much information.
+
+        Suggested approach:
+        1. If a == b, return 1.0
+        2. Tokenize both strings: split into words + character n-grams (n=3)
+           e.g., "hello world" → ["hello", "world", "hel", "ell", "llo", "wor", "orl", "rld"]
+        3. Build Counter (bag-of-words) vectors from these tokens
+        4. Compute cosine similarity: dot(a,b) / (|a| * |b|)
+
+        Hint: Use collections.Counter and math.sqrt.
+        Import them at the top of the file.
         """
-        left = set(a.lower().split())
-        right = set(b.lower().split())
-        if not left or not right:
-            return 0.0
-        return len(left & right) / len(left | right)
+        raise NotImplementedError("TODO: implement similarity()")
 
 
 # ---------------------------------------------------------------------------
