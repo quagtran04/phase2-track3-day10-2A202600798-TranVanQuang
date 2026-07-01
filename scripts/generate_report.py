@@ -97,9 +97,16 @@ def main() -> None:
     ]
     if no_cache is not None:
         comparison_keys = [
+            "availability",
+            "error_rate",
             "latency_p50_ms",
             "latency_p95_ms",
+            "latency_p99_ms",
+            "fallback_success_rate",
+            "circuit_open_count",
+            "recovery_time_ms",
             "estimated_cost",
+            "estimated_cost_saved",
             "cache_hit_rate",
         ]
         for key in comparison_keys:
@@ -107,6 +114,14 @@ def main() -> None:
             after = metrics[key]
             delta = after - before if isinstance(after, (int, float)) else "N/A"
             lines.append(f"| {key} | {fmt(before)} | {fmt(after)} | {fmt(delta)} |")
+        cost_delta = metrics["estimated_cost"] - no_cache["estimated_cost"]
+        cost_reduction = abs(cost_delta) / no_cache["estimated_cost"] if no_cache["estimated_cost"] else 0.0
+        lines += [
+            "",
+            f"Cache reduced estimated provider cost by {cost_reduction:.2%} "
+            f"({fmt(no_cache['estimated_cost'])} -> {fmt(metrics['estimated_cost'])}) "
+            f"while preserving {fmt(metrics['availability'])} availability.",
+        ]
     else:
         lines.append("| baseline | N/A | N/A | N/A |")
 

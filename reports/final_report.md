@@ -64,10 +64,19 @@ User Request
 
 | Metric | Without cache | With cache | Delta |
 |---|---:|---:|---:|
+| availability | 1.0000 | 1.0000 | 0.0000 |
+| error_rate | 0.0000 | 0.0000 | 0.0000 |
 | latency_p50_ms | 273.7100 | 240.1200 | -33.5900 |
 | latency_p95_ms | 317.6600 | 314.1100 | -3.5500 |
+| latency_p99_ms | 319.7600 | 319.5300 | -0.2300 |
+| fallback_success_rate | 1.0000 | 1.0000 | 0.0000 |
+| circuit_open_count | 24 | 6 | -18 |
+| recovery_time_ms | 3218.6412 | 2512.1943 | -706.4469 |
 | estimated_cost | 0.1371 | 0.0501 | -0.0871 |
+| estimated_cost_saved | 0.0000 | 0.1920 | 0.1920 |
 | cache_hit_rate | 0.0000 | 0.6400 | 0.6400 |
+
+Cache reduced estimated provider cost by 63.48% (0.1371 -> 0.0501) while preserving 1.0000 availability.
 
 ## 6. Redis shared cache
 
